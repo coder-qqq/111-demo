@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+ 
+// 节点结构
+typedef struct Node {
+    int data;              // 存储数据
+    struct Node *next;     // 指向下一个节点的指针
+} Node;
+ 
+// 队列结构
+typedef struct {
+    Node *front; // 队头指针
+    Node *rear;  // 队尾指针
+    int size;    // 当前队列大小
+} Queue;
+ 
+// 初始化队列
+void init(Queue *queue) {
+    queue->front = NULL; // 队头指针初始化为NULL
+    queue->rear = NULL;  // 队尾指针初始化为NULL
+    queue->size = 0;     // 当前队列大小初始化为0
+}
+ 
+// 销毁队列
+void destroy(Queue *queue) {
+    Node *current = queue->front;
+    while (current != NULL) {
+        Node *next = current->next; // 保存下一个节点
+        free(current);               // 释放当前节点
+        current = next;             // 移动到下一个节点
+    }
+    queue->front = NULL; // 清空队头指针
+    queue->rear = NULL;  // 清空队尾指针
+    queue->size = 0;     // 重置队列大小
+}
+ 
+// 入队（Enqueue）
+bool enqueue(Queue *queue, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node)); // 创建新节点
+    if (newNode == NULL) {
+        return false; // 内存分配失败
+    }
+    newNode->data = value; // 设置节点数据
+    newNode->next = NULL;  // 新节点的下一个指针设为NULL
+ 
+    if (queue->rear != NULL) {
+        queue->rear->next = newNode; // 如果队列不为空，将新节点添加到队尾
+    } else {
+        queue->front = newNode; // 如果队列为空，新节点是队头
+    }
+    queue->rear = newNode; // 更新队尾指针
+    queue->size++;         // 更新队列大小
+    return true;
+}
+ 
+// 出队（Dequeue）
+bool dequeue(Queue *queue, int *value) {
+    if (queue->front == NULL) {
+        return false; // 队列为空，无法出队
+    }
+    Node *nodeToDelete = queue->front; // 获取队头节点
+    *value = nodeToDelete->data;        // 返回队头数据
+    queue->front = queue->front->next; // 更新队头指针
+ 
+    if (queue->front == NULL) {
+        queue->rear = NULL; // 如果队列为空，队尾也设为NULL
+    }
+ 
+    free(nodeToDelete); // 释放队头节点
+    queue->size--;      // 更新队列大小
+    return true;
+}
+ 
+// 查看队头（Peek/Front）
+bool peekFront(Queue *queue, int *value) {
+    if (queue->front == NULL) {
+        return false; // 队列为空，无法查看队头
+    }
+    *value = queue->front->data; // 返回队头元素
+    return true;
+}
+ 
+// 查看队尾（Back）
+bool peekBack(Queue *queue, int *value) {
+    if (queue->rear == NULL) {
+        return false; // 队列为空，无法查看队尾
+    }
+    *value = queue->rear->data; // 返回队尾元素
+    return true;
+}
+ 
+// 检查队列是否为空（IsEmpty）
+bool isEmpty(Queue *queue) {
+    return queue->size == 0; // 如果大小为0，则队列为空
+}
+ 
+// 获取队列大小（Size）
+int size(Queue *queue) {
+    return queue->size; // 返回当前队列大小
+}
+ 
+// 测试链表实现的队列
+int main() {
+    Queue queue;
+    init(&queue); // 初始化队列
+ 
+    // 入队操作
+    enqueue(&queue, 10);
+    enqueue(&queue, 20);
+    enqueue(&queue, 30);
+ 
+    // 查看队头和队尾
+    int value;
+    if (peekFront(&queue, &value)) {
+        printf("队头: %d\n", value);
+    }
+    if (peekBack(&queue, &value)) {
+        printf("队尾: %d\n", value);
+    }
+ 
+    // 出队操作
+    while (dequeue(&queue, &value)) {
+        printf("出队: %d\n", value);
+    }
+ 
+    // 检查队列是否为空
+    printf("队列是否为空: %s\n", isEmpty(&queue) ? 1 : 0);
+ 
+    // 销毁队列
+    destroy(&queue);
+    return 0;
+}
