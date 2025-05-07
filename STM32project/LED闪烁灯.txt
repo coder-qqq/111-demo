@@ -1,0 +1,77 @@
+#include "stm32f10x.h"// Device header
+#include"Delay.h"
+int main(void)
+ {
+	 //               使能GPIOA时钟
+	
+	 RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
+	 //RCC_APB2PeriphClockCmd  是STM32标准库函数，用于控制APB2总线上外设时钟的使能或失能。
+	 //这里的功能是使能GPIOA（通用输入输出端口A）的时钟。在使用STM32的任何外设之前，都需要先使能其对应的时钟，
+	 //否则外设无法正常工作。
+	 // RCC_APB2Periph_GPIOA  是一个宏定义，表示GPIOA对应的时钟标志， ENABLE  也是宏定义，表示使能操作。
+	 
+	 
+	 
+	 //                配置GPIO初始结构体
+	 
+	 GPIO_InitTypeDef GPIO_InitStructure;
+	 //这个结构体用于存储GPIO的配置参数，在STM32标准库中，
+	 //通过填充这个结构体的各个成员变量来配置GPIO的工作模式、引脚、速度等属性。
+	 
+	 
+	 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	 //设置GPIO引脚的工作模式为推挽输出模式（ GPIO_Mode_Out_PP  是宏定义 ）。
+	 //推挽输出模式下，GPIO引脚可以输出高电平或低电平，具有较强的驱动能力，常用于驱动LED、继电器等外部设备。
+	 
+	 
+	 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	 //指定要配置的GPIO引脚为GPIOA的第1号引脚（ GPIO_Pin_1  是宏定义 ）。
+	 
+	 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	 //设置GPIO引脚的输出速度为50MHz（ GPIO_Speed_50MHz  是宏定义 ）。
+	 //这里的速度指的是GPIO引脚翻转电平的最大速率，选择合适的速度可以在满足需求的同时降低功耗、减少信号干扰等。
+	 
+	 
+	 
+	 //                       初始化GPIO
+	 
+	 GPIO_Init(GPIOA,&GPIO_InitStructure);
+	 //GPIO_Init  是STM32标准库函数，用于根据前面配置好的 GPIO_InitStructure  
+	 //结构体中的参数来初始化指定的GPIO端口（这里是GPIOA）。
+	 //它会将结构体中的配置信息写入到GPIO相关的寄存器中，从而使GPIO按照设定的模式、引脚、速度等参数工作。
+	 
+	 
+	 
+	 //                        引脚电平操作（注释）
+	 
+	
+	 //GPIO_ResetBits(GPIOA,GPIO_Pin_0);
+	 //GPIO_SetBits(GPIOA,GPIO_Pin_0);
+	 
+	 
+	 
+	 
+	 //                        循环内的引脚电平翻转及延时
+	 
+	while(1)
+	// while(1)  ：这是一个无限循环，程序进入这个循环后会一直执行其中的代码，除非发生复位、断电等情况。
+	//在嵌入式开发中，很多应用程序的主体逻辑都在这样的无限循环中实现。
+	
+	
+	 {
+		 	 GPIO_WriteBit(GPIOA,GPIO_Pin_1,Bit_RESET);
+		 // GPIO_WriteBit  是标准库函数，用于向指定GPIO端口的指定引脚写入一个位值。
+		 //这里是将GPIOA的Pin_1引脚设置为低电平（ Bit_RESET  是宏定义，表示低电平 ）。
+		 
+		 
+			 Delay_ms(500);
+		 //调用函数实现延时操作
+		 
+	         GPIO_WriteBit(GPIOA,GPIO_Pin_1,Bit_SET);
+		     
+		 // BIT_SET 是宏定义，表示高电平
+		 
+             Delay_ms(500);
+	 }
+ }
+  
